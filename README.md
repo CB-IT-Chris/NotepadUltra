@@ -1,85 +1,33 @@
 # Notepad Ultra
 
-Notepad Ultra is a fork of [Notepad Next](https://github.com/dail8859/NotepadNext) by Justin Dailey, licensed under the GPLv3. The original README follows.
+A fast, cross-platform text and code editor with syntax highlighting for 100+ languages, multi-cursor editing, a powerful search and replace, macros and a **dark mode**. Notepad Ultra is a fork of [Notepad Next](https://github.com/dail8859/NotepadNext) by Justin Dailey, which in turn is a reimplementation of Notepad++. It is developed with a focus on macOS.
 
----
+| Dark | Light |
+|---|---|
+| ![Notepad Ultra in dark mode](doc/screenshot-dark.png) | ![Notepad Ultra in light mode](doc/screenshot-light.png) |
 
-# Notepad Next
+## What is different from Notepad Next
 
-![Build Notepad Next](https://github.com/dail8859/NotepadNext/workflows/Build%20Notepad%20Next/badge.svg)
+- **Dark mode.** *Preferences > Appearance* switches between System, Light and Dark. The editor, the language colors, the tabs and the window follow, live and without a restart. "System" follows the macOS appearance.
+- **Startup text size fix on macOS** for windows opening on a non-Retina monitor (also sent upstream as [dail8859/NotepadNext#1192](https://github.com/dail8859/NotepadNext/pull/1192)).
+- New name and icon.
 
-A cross-platform, reimplementation of Notepad++.
+## Download
 
-Though the application overall is stable and usable, it should not be considered safe for critically important work.
+Prebuilt macOS packages (Apple Silicon and Intel) are on the [Releases](../../releases) page. The app is not notarized by Apple, so on first start use right click > Open.
 
-There are numerous bugs and half working implementations. Pull requests are greatly appreciated.
+## Build
 
-![screenshot](/doc/screenshot.png)
-
-# Installation
-
-Packages are available for Windows, Linux, and MacOS.
-
-Below are the supported distribution mechanisms. There may be other ways to download/install the application, but this project will likely not be able to offer any support for those since they are made available by other individuals.
-
-## Windows
-Windows packages are available as an installer or a stand-alone zip file on the [release](https://github.com/dail8859/NotepadNext/releases) page. The installer provides additional components such as an auto-updater and Windows context menu integration. You can easily install it with Winget:
-
-```powershell
-winget install dail8859.NotepadNext
-```
-
-## Linux
-Linux packages can be obtained by downloading the stand-alone AppImage on the [release](https://github.com/dail8859/NotepadNext/releases) page or by installing the [flatpak](https://flathub.org/apps/details/com.github.dail8859.NotepadNext) by executing:
+See [doc/Building.md](doc/Building.md). On macOS with Homebrew Qt 6:
 
 ```bash
-flatpak install flathub com.github.dail8859.NotepadNext
+brew install cmake qtbase qt5compat qtsvg qttools
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$(brew --prefix qtbase);$(brew --prefix qt5compat);$(brew --prefix qtsvg);$(brew --prefix qttools)"
+cmake --build build -j
 ```
 
-If you are using Ubuntu and prefer an up-to-date deb version, you can use the [PPA supporting Ubuntu 22.04 and newer](https://launchpad.net/~quentiumyt/+archive/ubuntu/notepadnext) provided by
-[Quentin Lienhardt](https://github.com/QuentiumYT). You can add it by executing:
+Dark mode uses `QStyleHints::setColorScheme()` from Qt 6.8. On older Qt versions a Fusion style with a dark palette is used instead.
 
-```bash
-sudo add-apt-repository ppa:quentiumyt/notepadnext
-sudo apt update
-sudo apt install notepadnext
-```
+## Credits and license
 
-## MacOS
-MacOS disk images can be downloaded from the [release](https://github.com/dail8859/NotepadNext/releases) page.
-
-It can also be installed using brew:
-```bash
-brew tap dail8859/notepadnext
-brew install notepadnext
-```
-
-If you receive warnings that Notepad Next is "damaged", this is an Apple complaining that I have not paid them money to "trust" me. You can bypass this by running:
-
-```bash
-xattr -d com.apple.quarantine /Applications/NotepadNext.app
-```
-
-#### MacOS Tweaks
-
-By default, MacOS enables font smoothing which causes text to appear quite differently from the Windows version. This can be disabled system-wide using the following command:
-
-```bash
-defaults -currentHost write -g AppleFontSmoothing -int 0
-```
-
-A restart is required for this to take effect.
-
-# Translations
-Translations are contributed by the community. All translations are managed using Crowdin at `https://crowdin.com/project/notepadnext`. If there is a language missing you would like to contribute, feel free to start a discussion on Crowdin.
-
-# Development
-Current development is done using QtCreator with the Microsoft Visual C++ (msvc) compiler. Qt 6.5 is the currently supported Qt version. Older versions of Qt are likely to work but are not tested. Any fixes for older versions will be accepted as long as they do not introduce complex fixes. This application is also known to build successfully on various Linux distributions and macOS. Other platforms/compilers should be usable with minor modifications.
-
-If you are familiar with building C++ Qt desktop applications with Qt Creator, then this should be as simple as opening `CMakeLists` and build/run the project.
-
-If you are new to building C++ Qt desktop applications, there is a more detailed guide [here](/doc/Building.md).
-
-
-# License
-This code is released under the [GNU General Public License version 3](https://www.gnu.org/licenses/gpl-3.0.txt).
+Notepad Ultra is based on [Notepad Next](https://github.com/dail8859/NotepadNext) by Justin Dailey and uses [Scintilla](https://www.scintilla.org/), [Lexilla](https://www.scintilla.org/Lexilla.html) and [Qt](https://www.qt.io/). It is licensed under the [GNU General Public License v3](LICENSE). The original README is kept in [doc/README-Notepad-Next.md](doc/README-Notepad-Next.md).

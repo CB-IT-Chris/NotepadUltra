@@ -43,6 +43,6 @@ add_custom_target(dmg
         -dmg
     COMMAND ${CMAKE_COMMAND} -E rename
         ${INSTALL_DIR}/NotepadNext.dmg
-        ${CMAKE_BINARY_DIR}/NotepadNext-v${PROJECT_VERSION}.dmg
+        ${CMAKE_BINARY_DIR}/NotepadUltra-v${PROJECT_VERSION}.dmg
     DEPENDS install_local
 )
