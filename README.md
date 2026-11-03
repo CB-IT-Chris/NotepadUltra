@@ -1,6 +1,6 @@
 # Notepad Ultra
 
-A fast, cross-platform text and code editor with syntax highlighting for 100+ languages, multi-cursor editing, a powerful search and replace, macros and a **dark mode**. Notepad Ultra is a fork of [Notepad Next](https://github.com/dail8859/NotepadNext) by Justin Dailey, which in turn is a reimplementation of Notepad++. It is developed with a focus on macOS.
+A fast, cross-platform text and code editor with syntax highlighting for 80+ languages, multi-cursor editing, a powerful search and replace, macros and a **dark mode**. Notepad Ultra is a fork of [Notepad Next](https://github.com/dail8859/NotepadNext) by Justin Dailey, which in turn is a reimplementation of Notepad++. It is developed with a focus on macOS.
 
 | Dark | Light |
 |---|---|
