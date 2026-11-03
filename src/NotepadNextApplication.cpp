@@ -37,6 +37,7 @@
 
 #include <QCommandLineParser>
 #include <QStyleHints>
+#include <QTimer>
 #include <QStyleFactory>
 #include <QPalette>
 
@@ -387,7 +388,12 @@ void NotepadNextApplication::updateColorScheme()
         }
     }
 
-    emit darkModeChanged(dark);
+    // Widgets that already exist keep the palette they resolved before the switch (light backgrounds with dark
+    // text in a dark window), so once the new palette is in place recreate the style to repolish everything
+    QTimer::singleShot(0, this, [this, dark]() {
+        setStyle(style()->name());
+        emit darkModeChanged(dark);
+    });
 }
 
 QStringList NotepadNextApplication::getLanguageKeywords(const QString &languageName) const

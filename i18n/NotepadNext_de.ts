@@ -1957,6 +1957,26 @@
       <translation>Übersetzung:</translation>
     </message>
     <message>
+      <location filename="../src/dialogs/PreferencesDialog.ui" line="121"/>
+      <source>Appearance:</source>
+      <translation>Darstellung:</translation>
+    </message>
+    <message>
+      <location filename="../src/dialogs/PreferencesDialog.cpp" line="82"/>
+      <source>System</source>
+      <translation>System</translation>
+    </message>
+    <message>
+      <location filename="../src/dialogs/PreferencesDialog.cpp" line="83"/>
+      <source>Light</source>
+      <translation>Hell</translation>
+    </message>
+    <message>
+      <location filename="../src/dialogs/PreferencesDialog.cpp" line="84"/>
+      <source>Dark</source>
+      <translation>Dunkel</translation>
+    </message>
+    <message>
       <location filename="../src/dialogs/PreferencesDialog.ui" line="123"/>
       <source>Exit on last tab closed</source>
       <translation>Beenden beim Schließen des letzten Tab</translation>
