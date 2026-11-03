@@ -48,11 +48,59 @@ function DialogFilters()
     return table.concat(filters, ";;")
 end
 
+-- The language definitions are written for a light background. In dark mode the lightness of each color is
+-- inverted, with a floor/ceiling so text stays readable and highlights stay dark. Colors are BGR as returned by rgb().
+local function dark_variant(color, is_background)
+    local r, g, b = (color & 0xFF) / 255, ((color >> 8) & 0xFF) / 255, ((color >> 16) & 0xFF) / 255
+    local max, min = math.max(r, g, b), math.min(r, g, b)
+    local l = (max + min) / 2
+    local h, s = 0, 0
+
+    if max ~= min then
+        local d = max - min
+        s = l > 0.5 and d / (2 - max - min) or d / (max + min)
+        if max == r then h = (g - b) / d + (g < b and 6 or 0)
+        elseif max == g then h = (b - r) / d + 2
+        else h = (r - g) / d + 4 end
+        h = h / 6
+    end
+
+    if is_background then
+        if l >= 0.97 then return 0x1E1E1E end -- plain white background becomes the editor background
+        l = math.min(1 - l, 0.45)
+    else
+        l = math.max(1 - l, 0.62)
+    end
+
+    local function hue(p, q, t)
+        if t < 0 then t = t + 1 elseif t > 1 then t = t - 1 end
+        if t < 1/6 then return p + (q - p) * 6 * t end
+        if t < 1/2 then return q end
+        if t < 2/3 then return p + (q - p) * (2/3 - t) * 6 end
+        return p
+    end
+
+    local nr, ng, nb = l, l, l
+    if s ~= 0 then
+        local q = l < 0.5 and l * (1 + s) or l + s - l * s
+        local p = 2 * l - q
+        nr, ng, nb = hue(p, q, h + 1/3), hue(p, q, h), hue(p, q, h - 1/3)
+    end
+
+    local function byte(v) return math.floor(v * 255 + 0.5) end
+    return byte(nr) | (byte(ng) << 8) | (byte(nb) << 16)
+end
+
 function SetStyle(L)
     if L.styles then
         for _, style in pairs(L.styles) do
-            editor.StyleFore[style.id] = style.fgColor
-            editor.StyleBack[style.id] = style.bgColor
+            if dark_mode then
+                editor.StyleFore[style.id] = dark_variant(style.fgColor, false)
+                editor.StyleBack[style.id] = dark_variant(style.bgColor, true)
+            else
+                editor.StyleFore[style.id] = style.fgColor
+                editor.StyleBack[style.id] = style.bgColor
+            end
 
             if style.fontStyle then
                 editor.StyleBold[style.id] = (style.fontStyle & 1 == 1)

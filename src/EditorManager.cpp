@@ -19,6 +19,7 @@
 #include <QApplication>
 
 #include "ApplicationSettings.h"
+#include "NotepadNextApplication.h"
 
 #include "EditorManager.h"
 #include "ScintillaNext.h"
@@ -257,11 +258,6 @@ void EditorManager::setupEditor(ScintillaNext *editor)
 #endif
 
     editor->setFoldMarkers(QStringLiteral("box"));
-    for (int i = SC_MARKNUM_FOLDEREND; i <= SC_MARKNUM_FOLDEROPEN; ++i) {
-        editor->markerSetFore(i, 0xF3F3F3);
-        editor->markerSetBack(i, 0x808080);
-        editor->markerSetBackSelected(i, 0x0000FF);
-    }
 
     editor->setScaleTechnique(SCALE_TECHNIQUE_PIXEL_ALIGNED);
 
@@ -300,8 +296,6 @@ void EditorManager::setupEditor(ScintillaNext *editor)
     editor->setCaretLineVisibleAlways(true);
     editor->setCaretWidth(2);
 
-    editor->setEdgeColour(0x80FFFF);
-
     // https://www.scintilla.org/ScintillaDoc.html#ElementColours
     // SC_ELEMENT_SELECTION_TEXT
     // SC_ELEMENT_SELECTION_BACK
@@ -310,21 +304,14 @@ void EditorManager::setupEditor(ScintillaNext *editor)
     // SC_ELEMENT_SELECTION_SECONDARY_TEXT
     // SC_ELEMENT_SELECTION_SECONDARY_BACK
     // SC_ELEMENT_SELECTION_INACTIVE_TEXT
-    editor->setElementColour(SC_ELEMENT_SELECTION_INACTIVE_BACK, 0xFFE0E0E0);
     // SC_ELEMENT_CARET
     // SC_ELEMENT_CARET_ADDITIONAL
-    editor->setElementColour(SC_ELEMENT_CARET_LINE_BACK, 0xFFFFE8E8);
-    editor->setElementColour(SC_ELEMENT_WHITE_SPACE, 0xFFD0D0D0);
     // SC_ELEMENT_WHITE_SPACE_BACK
     // SC_ELEMENT_HOT_SPOT_ACTIVE
     // SC_ELEMENT_HOT_SPOT_ACTIVE_BACK
-    editor->setElementColour(SC_ELEMENT_FOLD_LINE, 0xFFA0A0A0);
     // SC_ELEMENT_HIDDEN_LINE
 
     editor->setWhitespaceSize(2);
-
-    editor->setFoldMarginColour(true, 0xFFFFFF);
-    editor->setFoldMarginHiColour(true, 0xE9E9E9);
 
     editor->setAutomaticFold(SC_AUTOMATICFOLD_SHOW | SC_AUTOMATICFOLD_CLICK | SC_AUTOMATICFOLD_CHANGE);
     editor->markerEnableHighlight(true);
@@ -332,24 +319,7 @@ void EditorManager::setupEditor(ScintillaNext *editor)
     editor->setCharsDefault();
     editor->setWordChars(editor->wordChars() + settings->additionalWordChars().toLatin1());
 
-    editor->styleSetFore(STYLE_DEFAULT, 0x000000);
-    editor->styleSetBack(STYLE_DEFAULT, 0xFFFFFF);
-    editor->styleSetSize(STYLE_DEFAULT, settings->fontSize());
-    editor->styleSetFont(STYLE_DEFAULT, settings->fontName().toUtf8().data());
-    editor->styleClearAll();
-
-    editor->styleSetFore(STYLE_LINENUMBER, 0x808080);
-    editor->styleSetBack(STYLE_LINENUMBER, 0xE4E4E4);
-    editor->styleSetBold(STYLE_LINENUMBER, false);
-
-    editor->styleSetFore(STYLE_BRACELIGHT, 0x0000FF);
-    editor->styleSetBack(STYLE_BRACELIGHT, 0xFFFFFF);
-
-    editor->styleSetFore(STYLE_BRACEBAD, 0x000080);
-    editor->styleSetBack(STYLE_BRACEBAD, 0xFFFFFF);
-
-    editor->styleSetFore(STYLE_INDENTGUIDE, 0xC0C0C0);
-    editor->styleSetBack(STYLE_INDENTGUIDE, 0xFFFFFF);
+    applyEditorColors(editor);
 
     // STYLE_CONTROLCHAR
     // STYLE_CALLTIP
@@ -409,6 +379,63 @@ void EditorManager::setupEditor(ScintillaNext *editor)
     bm->setEnabled(true);
 
     new HTMLAutoCompleteDecorator(editor);
+}
+
+void EditorManager::applyEditorColors(ScintillaNext *editor)
+{
+    // Colors are BGR (0xBBGGRR), element colors are 0xAABBGGRR
+    NotepadNextApplication *app = qobject_cast<NotepadNextApplication *>(qApp);
+    const bool dark = app && app->isDarkMode();
+
+    const int defaultFore = dark ? 0xD4D4D4 : 0x000000;
+    const int defaultBack = dark ? 0x1E1E1E : 0xFFFFFF;
+
+    for (int i = SC_MARKNUM_FOLDEREND; i <= SC_MARKNUM_FOLDEROPEN; ++i) {
+        editor->markerSetFore(i, dark ? 0x1E1E1E : 0xF3F3F3);
+        editor->markerSetBack(i, 0x808080);
+        editor->markerSetBackSelected(i, dark ? 0xFF9E4F : 0x0000FF);
+    }
+
+    editor->setEdgeColour(dark ? 0x5A5A5A : 0x80FFFF);
+
+    if (dark) {
+        editor->setElementColour(SC_ELEMENT_SELECTION_BACK, 0xFF784F26);
+        editor->setElementColour(SC_ELEMENT_CARET, 0xFFD4D4D4);
+        editor->setElementColour(SC_ELEMENT_SELECTION_INACTIVE_BACK, 0xFF3A3D41);
+        editor->setElementColour(SC_ELEMENT_CARET_LINE_BACK, 0xFF2E2E2E);
+        editor->setElementColour(SC_ELEMENT_WHITE_SPACE, 0xFF505050);
+        editor->setElementColour(SC_ELEMENT_FOLD_LINE, 0xFF606060);
+    }
+    else {
+        editor->resetElementColour(SC_ELEMENT_SELECTION_BACK);
+        editor->resetElementColour(SC_ELEMENT_CARET);
+        editor->setElementColour(SC_ELEMENT_SELECTION_INACTIVE_BACK, 0xFFE0E0E0);
+        editor->setElementColour(SC_ELEMENT_CARET_LINE_BACK, 0xFFFFE8E8);
+        editor->setElementColour(SC_ELEMENT_WHITE_SPACE, 0xFFD0D0D0);
+        editor->setElementColour(SC_ELEMENT_FOLD_LINE, 0xFFA0A0A0);
+    }
+
+    editor->setFoldMarginColour(true, defaultBack);
+    editor->setFoldMarginHiColour(true, dark ? 0x2A2A2A : 0xE9E9E9);
+
+    editor->styleSetFore(STYLE_DEFAULT, defaultFore);
+    editor->styleSetBack(STYLE_DEFAULT, defaultBack);
+    editor->styleSetSize(STYLE_DEFAULT, settings->fontSize());
+    editor->styleSetFont(STYLE_DEFAULT, settings->fontName().toUtf8().data());
+    editor->styleClearAll();
+
+    editor->styleSetFore(STYLE_LINENUMBER, dark ? 0x858585 : 0x808080);
+    editor->styleSetBack(STYLE_LINENUMBER, dark ? 0x252526 : 0xE4E4E4);
+    editor->styleSetBold(STYLE_LINENUMBER, false);
+
+    editor->styleSetFore(STYLE_BRACELIGHT, dark ? 0x00D7FF : 0x0000FF);
+    editor->styleSetBack(STYLE_BRACELIGHT, defaultBack);
+
+    editor->styleSetFore(STYLE_BRACEBAD, dark ? 0x5050FF : 0x000080);
+    editor->styleSetBack(STYLE_BRACEBAD, defaultBack);
+
+    editor->styleSetFore(STYLE_INDENTGUIDE, dark ? 0x404040 : 0xC0C0C0);
+    editor->styleSetBack(STYLE_INDENTGUIDE, defaultBack);
 }
 
 void EditorManager::purgeOldEditorPointers()

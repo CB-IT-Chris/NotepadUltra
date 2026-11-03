@@ -107,6 +107,7 @@ public:
     DEFINE_SETTING(DefaultDirectory, defaultDirectory, QString)
 
     DEFINE_SETTING(Translation, translation, QString)
+    DEFINE_SETTING(ColorScheme, colorScheme, QString) // "system", "light" or "dark"
 
     DEFINE_SETTING(ShowWhitespace, showWhitespace, bool);
     DEFINE_SETTING(ShowEndOfLine, showEndOfLine, bool);

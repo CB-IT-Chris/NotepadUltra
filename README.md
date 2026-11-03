@@ -1,3 +1,9 @@
+# Notepad Ultra
+
+Notepad Ultra is a fork of [Notepad Next](https://github.com/dail8859/NotepadNext) by Justin Dailey, licensed under the GPLv3. The original README follows.
+
+---
+
 # Notepad Next
 
 ![Build Notepad Next](https://github.com/dail8859/NotepadNext/workflows/Build%20Notepad%20Next/badge.svg)

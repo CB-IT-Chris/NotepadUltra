@@ -71,6 +71,12 @@ public:
 
     QStringList debugInfo() const;
 
+    // True if the effective color scheme is dark, i.e. the setting is "dark" or it is "system" and the OS is dark
+    bool isDarkMode() const;
+
+signals:
+    void darkModeChanged(bool dark);
+
 protected:
     bool event(QEvent *event) override;
 
@@ -83,6 +89,11 @@ private:
     void openFiles(const QStringList &files);
 
     void loadSettings();
+
+    void applyColorScheme();
+    void updateColorScheme();
+
+    bool lastDarkMode = false;
 
     EditorManager *editorManager;
     RecentFilesListManager *recentFilesListManager;

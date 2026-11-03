@@ -68,6 +68,14 @@ PreferencesDialog::PreferencesDialog(ApplicationSettings *settings, QWidget *par
         showApplicationRestartRequired();
     });
 
+    ui->comboBoxColorScheme->addItem(tr("System"), QStringLiteral("system"));
+    ui->comboBoxColorScheme->addItem(tr("Light"), QStringLiteral("light"));
+    ui->comboBoxColorScheme->addItem(tr("Dark"), QStringLiteral("dark"));
+    ui->comboBoxColorScheme->setCurrentIndex(qMax(0, ui->comboBoxColorScheme->findData(settings->colorScheme())));
+    connect(ui->comboBoxColorScheme, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=, this](int index) {
+        settings->setColorScheme(ui->comboBoxColorScheme->itemData(index).toString());
+    });
+
     MapSettingToCheckBox(ui->checkBoxExitOnLastTabClosed, &ApplicationSettings::exitOnLastTabClosed, &ApplicationSettings::setExitOnLastTabClosed, &ApplicationSettings::exitOnLastTabClosedChanged);
 
     ui->fcbDefaultFont->setCurrentFont(QFont(settings->fontName()));

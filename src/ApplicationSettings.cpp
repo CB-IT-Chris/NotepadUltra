@@ -59,6 +59,7 @@ CREATE_SETTING(App, DefaultDirectoryBehavior, defaultDirectoryBehavior, Applicat
 CREATE_SETTING(App, DefaultDirectory, defaultDirectory, QString, QString())
 
 CREATE_SETTING(App, Translation, translation, QString, QStringLiteral(""))
+CREATE_SETTING(Gui, ColorScheme, colorScheme, QString, QStringLiteral("system"))
 
 CREATE_SETTING(Editor, ShowWhitespace, showWhitespace, bool, false);
 CREATE_SETTING(Editor, ShowEndOfLine, showEndOfLine, bool, false);

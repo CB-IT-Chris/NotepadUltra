@@ -36,6 +36,9 @@
 #include "Lexilla.h"
 
 #include <QCommandLineParser>
+#include <QStyleHints>
+#include <QStyleFactory>
+#include <QPalette>
 
 #include <QDirIterator>
 
@@ -47,7 +50,7 @@ const SingleApplication::Options opts = SingleApplication::ExcludeAppPath | Sing
 
 void parseCommandLine(QCommandLineParser &parser, const QStringList &args)
 {
-    parser.setApplicationDescription("Notepad Next");
+    parser.setApplicationDescription("Notepad Ultra");
     parser.addHelpOption();
     parser.addVersionOption();
 
@@ -122,11 +125,17 @@ bool NotepadNextApplication::init()
     // This connection isn't needed since the application can not appropriately retranslate the UI at runtime
     //connect(settings, &ApplicationSettings::translationChanged, translationManager, &TranslationManager::loadTranslationByName);
 
+    applyColorScheme();
+    lastDarkMode = isDarkMode();
+
     luaState = new LuaState();
 
     recentFilesListManager = new RecentFilesListManager(this);
     editorManager = new EditorManager(settings, this);
     sessionManager = new SessionManager(this);
+
+    connect(settings, &ApplicationSettings::colorSchemeChanged, this, &NotepadNextApplication::updateColorScheme);
+    connect(styleHints(), &QStyleHints::colorSchemeChanged, this, &NotepadNextApplication::updateColorScheme);
 
     connect(editorManager, &EditorManager::editorCreated, recentFilesListManager, [this](ScintillaNext *editor) {
         if (editor->isFile()) {
@@ -293,8 +302,92 @@ void NotepadNextApplication::setEditorLanguage(ScintillaNext *editor, const QStr
 
     getLuaState()->setVariable("skip_tabs", skipTabs);
     getLuaState()->setVariable("skip_tabwidth", skipTabWidth);
+    getLuaState()->setVariable("dark_mode", isDarkMode());
 
     getLuaState()->execute("SetLanguage(languageName)");
+}
+
+bool NotepadNextApplication::isDarkMode() const
+{
+    const QString scheme = settings->colorScheme();
+
+    if (scheme == QLatin1String("dark"))
+        return true;
+    if (scheme == QLatin1String("light"))
+        return false;
+
+    return styleHints()->colorScheme() == Qt::ColorScheme::Dark;
+}
+
+void NotepadNextApplication::applyColorScheme()
+{
+    const QString scheme = settings->colorScheme();
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+    // Lets Qt switch the native style (macOS, Windows 11) and the palette; Unknown follows the system
+    Qt::ColorScheme colorScheme = Qt::ColorScheme::Unknown;
+    if (scheme == QLatin1String("dark"))
+        colorScheme = Qt::ColorScheme::Dark;
+    else if (scheme == QLatin1String("light"))
+        colorScheme = Qt::ColorScheme::Light;
+
+    styleHints()->setColorScheme(colorScheme);
+#else
+    // Qt < 6.8 can not force a color scheme, so fall back to the Fusion style with a dark palette
+    static const QString defaultStyleName = style()->objectName();
+    static const QPalette defaultPalette = QApplication::palette();
+
+    if (scheme == QLatin1String("dark")) {
+        QPalette p;
+        p.setColor(QPalette::Window, QColor(45, 45, 45));
+        p.setColor(QPalette::WindowText, QColor(212, 212, 212));
+        p.setColor(QPalette::Base, QColor(30, 30, 30));
+        p.setColor(QPalette::AlternateBase, QColor(45, 45, 45));
+        p.setColor(QPalette::ToolTipBase, QColor(45, 45, 45));
+        p.setColor(QPalette::ToolTipText, QColor(212, 212, 212));
+        p.setColor(QPalette::Text, QColor(212, 212, 212));
+        p.setColor(QPalette::Button, QColor(60, 60, 60));
+        p.setColor(QPalette::ButtonText, QColor(212, 212, 212));
+        p.setColor(QPalette::BrightText, Qt::red);
+        p.setColor(QPalette::Link, QColor(80, 160, 255));
+        p.setColor(QPalette::Highlight, QColor(38, 79, 120));
+        p.setColor(QPalette::HighlightedText, Qt::white);
+        p.setColor(QPalette::Disabled, QPalette::Text, QColor(120, 120, 120));
+        p.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(120, 120, 120));
+        p.setColor(QPalette::Disabled, QPalette::WindowText, QColor(120, 120, 120));
+        setStyle(QStyleFactory::create(QStringLiteral("Fusion")));
+        setPalette(p);
+    }
+    else {
+        setStyle(QStyleFactory::create(defaultStyleName));
+        setPalette(defaultPalette);
+    }
+#endif
+}
+
+void NotepadNextApplication::updateColorScheme()
+{
+    applyColorScheme();
+
+    const bool dark = isDarkMode();
+    if (dark == lastDarkMode)
+        return;
+    lastDarkMode = dark;
+
+    // Editor colors are set on the editor itself, so rebuild them and then re-apply the language styles
+    if (editorManager) {
+        for (const auto &editor : editorManager->getEditors()) {
+            if (editor.isNull())
+                continue;
+
+            editorManager->applyEditorColors(editor);
+
+            if (!editor->languageName.isEmpty())
+                setEditorLanguage(editor, editor->languageName);
+        }
+    }
+
+    emit darkModeChanged(dark);
 }
 
 QStringList NotepadNextApplication::getLanguageKeywords(const QString &languageName) const
