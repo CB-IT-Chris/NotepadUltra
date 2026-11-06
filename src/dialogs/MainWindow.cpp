@@ -920,6 +920,12 @@ MainWindow::MainWindow(NotepadNextApplication *app) :
                                 .arg(QApplication::applicationDisplayName(), APP_VERSION, APP_DISTRIBUTION, QStringLiteral(APP_COPYRIGHT).toHtmlEscaped()));
     });
 
+    // On macOS the about action is moved into the application menu, so also show the version directly in the Help menu
+    QAction *versionAction = new QAction(tr("Version %1").arg(QStringLiteral(APP_VERSION)), this);
+    versionAction->setMenuRole(QAction::NoRole);
+    connect(versionAction, &QAction::triggered, ui->actionAboutNotepadNext, &QAction::trigger);
+    ui->menuHelp->insertAction(ui->menuHelp->actions().value(0), versionAction);
+
     connect(ui->actionDebugInfo, &QAction::triggered, this, [=, this]() {
         QMessageBox mb(QMessageBox::Information, tr("Debug Info"), app->debugInfo().join('\n'), QMessageBox::Ok, this);
 
