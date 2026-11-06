@@ -48,6 +48,11 @@ DockedEditor::DockedEditor(QWidget *parent) : QObject(parent)
 {
     ads::CDockComponentsFactory::setFactory(new DockedEditorComponentsFactory());
 
+    // The app styles the tabs itself (see stylesheets/npp*.css). Without this the docking library loads its own
+    // stylesheet and reloads it whenever the application palette changes, which overrides ours after a switch
+    // between the light and the dark color scheme (unreadable tab titles)
+    ads::CDockManager::setConfigFlag(ads::CDockManager::DisableStylesheet, true);
+
     ads::CDockManager::setConfigFlag(ads::CDockManager::AllTabsHaveCloseButton, true);
     ads::CDockManager::setConfigFlag(ads::CDockManager::AlwaysShowTabs, true);
     ads::CDockManager::setConfigFlag(ads::CDockManager::OpaqueSplitterResize, true);

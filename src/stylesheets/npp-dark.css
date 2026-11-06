@@ -31,6 +31,7 @@ ads--CDockWidgetTab[activeTab="false"] QLabel {
 
 #tabCloseButton
 {
+    qproperty-icon: url(:/icons/tab-close-dark.svg);
     background: rgba(255, 255, 255, 24);
 }
 
