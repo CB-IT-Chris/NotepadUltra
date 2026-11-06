@@ -354,7 +354,6 @@
     <addaction name="separator"/>
     <addaction name="actionAboutQt"/>
     <addaction name="actionAboutNotepadNext"/>
-    <addaction name="actionDebugInfo"/>
    </widget>
    <widget class="QMenu" name="menuEncodings">
     <property name="title">

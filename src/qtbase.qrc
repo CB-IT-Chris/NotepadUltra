@@ -1,0 +1,23 @@
+<RCC>
+    <!-- Qt's own translations (macOS application menu: About, Preferences, Hide, Quit ...), copied from the qttranslations package -->
+    <qresource prefix="/i18n">
+        <file alias="qtbase_ar.qm">i18n-qt/qtbase_ar.qm</file>
+        <file alias="qtbase_cs.qm">i18n-qt/qtbase_cs.qm</file>
+        <file alias="qtbase_de.qm">i18n-qt/qtbase_de.qm</file>
+        <file alias="qtbase_es.qm">i18n-qt/qtbase_es.qm</file>
+        <file alias="qtbase_fr.qm">i18n-qt/qtbase_fr.qm</file>
+        <file alias="qtbase_hu.qm">i18n-qt/qtbase_hu.qm</file>
+        <file alias="qtbase_it.qm">i18n-qt/qtbase_it.qm</file>
+        <file alias="qtbase_ja.qm">i18n-qt/qtbase_ja.qm</file>
+        <file alias="qtbase_ko.qm">i18n-qt/qtbase_ko.qm</file>
+        <file alias="qtbase_nl.qm">i18n-qt/qtbase_nl.qm</file>
+        <file alias="qtbase_pl.qm">i18n-qt/qtbase_pl.qm</file>
+        <file alias="qtbase_pt_BR.qm">i18n-qt/qtbase_pt_BR.qm</file>
+        <file alias="qtbase_ru.qm">i18n-qt/qtbase_ru.qm</file>
+        <file alias="qtbase_sv.qm">i18n-qt/qtbase_sv.qm</file>
+        <file alias="qtbase_tr.qm">i18n-qt/qtbase_tr.qm</file>
+        <file alias="qtbase_uk.qm">i18n-qt/qtbase_uk.qm</file>
+        <file alias="qtbase_zh_CN.qm">i18n-qt/qtbase_zh_CN.qm</file>
+        <file alias="qtbase_zh_TW.qm">i18n-qt/qtbase_zh_TW.qm</file>
+    </qresource>
+</RCC>
