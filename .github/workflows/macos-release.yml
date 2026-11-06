@@ -90,6 +90,10 @@ jobs:
           - Dark mode: *Preferences > Appearance* switches between System, Light and Dark, applied live.
           - Fix for text drawn at twice the size on a non-Retina monitor after startup.
           - New name and icon.
+          - Tabs show their close button again, and the tab titles stay readable after switching the color scheme at runtime.
+          - The Help menu shows the version.
+          - The macOS application menu is translated (Qt translations are bundled).
+          - The Debug Info menu entry is gone.
 
           ## Install (macOS)
           Download the DMG for your Mac (`arm64` for Apple Silicon, `x64` for Intel), open it and drag the app to Applications. The app is not notarized by Apple, so on first start right click the app and choose Open.
